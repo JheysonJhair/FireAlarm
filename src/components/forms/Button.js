@@ -26,7 +26,7 @@ const styles = StyleSheet.create({
   linearGradient: {
     borderRadius: 10,
     padding: 15,
-    width: "95%",
+    width: "100%",
     alignItems: "center",
   },
   textoBoton: {

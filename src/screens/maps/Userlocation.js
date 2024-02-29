@@ -5,9 +5,9 @@ import * as Location from "expo-location";
 import { reverseGeocodeAsync } from "expo-location";
 import { useNavigation } from "@react-navigation/native";
 
-import Button from "../../components/forms/Button";
 import { useLocation } from "../../components/utils/LocationContext ";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import Button from "../../components/forms/Button";
 
 function UserLocation() {
   const navigation = useNavigation();
@@ -60,16 +60,18 @@ function UserLocation() {
     try {
       await AsyncStorage.setItem(
         "locationData",
-        JSON.stringify({ latitude: location.latitude, longitude: location.longitude })
+        JSON.stringify({
+          latitude: location.latitude,
+          longitude: location.longitude,
+        })
       );
     } catch (error) {
       console.error("Error al guardar datos de locacion:", error);
     }
   };
-  
-  const handleWelcome = () => {
-    saveUserData();
-    navigation.navigate("Welcome");
+
+  const handleUbication = () => {
+    navigation.navigate("Explore");
   };
 
   return (
@@ -96,7 +98,9 @@ function UserLocation() {
       <View style={styles.contAddress}>
         <Text style={styles.address}>{address}</Text>
       </View>
-      <Button title="Continuar" onPress={handleWelcome} />
+      <View style={styles.contB}>
+        <Button title="Enviar mi ubicación" onPress={handleUbication} />
+      </View>
     </View>
   );
 }
@@ -123,6 +127,9 @@ const styles = StyleSheet.create({
     textAlign: "left",
     color: "white",
   },
+  contB:{
+    width: "90%",
+  }
 });
 
 export default UserLocation;

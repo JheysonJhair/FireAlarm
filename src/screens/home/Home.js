@@ -4,30 +4,31 @@ import {
   Text,
   ScrollView,
   StyleSheet,
-  Image,
   TouchableOpacity,
+  ImageBackground,
   TouchableWithoutFeedback,
 } from "react-native";
-import { useNavigation } from "@react-navigation/native";
-import Icon from "react-native-vector-icons/FontAwesome";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import Button from "../../components/forms/Button";
 import Input from "../../components/forms/Input";
 import TextArea from "../../components/forms/TextArea";
+import ImagePickerComponent from "../../components/forms/ImagePickerComponent ";
 import Footer from "../../components/utils/Footer";
-import LoadingIndicator from "../../components/utils/LoadingIndicator";
+import { useNavigation } from "@react-navigation/native";
+
 import { useUser } from "../../components/utils/UserContext";
 
+const maps = require("../../assets/img/maps.png");
+
 export default function Home() {
+  const navigation = useNavigation();
   const [selectedCategory, setSelectedCategory] = useState("Para ti");
   const [showProfileOptions, setShowProfileOptions] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
   const { userData } = useUser();
-  const navigation = useNavigation();
   const [descripcion, setDescripcion] = useState("");
-  const MAX_CARACTERES = 71;
-  const [email, setEmail] = useState("");
+  const MAX_CARACTERES = 80;
+  const [direccion, setDireccion] = useState("");
   const toggleProfileOptions = () => {
     setShowProfileOptions(!showProfileOptions);
   };
@@ -63,27 +64,23 @@ export default function Home() {
       setDescripcion(text);
     }
   };
+  const handleUbication = () => {
+    navigation.navigate("Explore");
+  };
   return (
-    <View style={styles.container}>
-      <TouchableWithoutFeedback>
-        <View style={styles.contentContainer}>
-          <View style={styles.content}>
-            <View>
-              <Text style={styles.h1}>FireAlarm</Text>
-              <Text style={styles.h2}>Hola, Bienvenido de nuevo</Text>
-            </View>
-            <View>
-              <Text>SUBIR IAMGENES</Text>
-              <TextArea
-                placeholder="Descripción"
-                onChangeText={handleDescripcionChange}
-                value={descripcion}
-              />
-            </View>
+    <View style={styles.contentContainer}>
+      <View style={styles.content}>
+        <View>
+          <Text style={styles.h1}>FireAlarm</Text>
+          <Text style={styles.h2}>Hola, Bienvenido de nuevo</Text>
+        </View>
+        <ScrollView style={styles.containerBac}>
+          <View>
+            <ImagePickerComponent />
             <View style={styles.formSection}>
               <Text style={styles.label}>Descripción Corta</Text>
               <TextArea
-                placeholder="Descripción"
+                placeholder="Qué esta pasando??"
                 onChangeText={handleDescripcionChange}
                 value={descripcion}
               />
@@ -92,74 +89,38 @@ export default function Home() {
               </Text>
             </View>
             <View>
-              <Text>UBICACION EN TIEMPO REAL</Text>
-              <TextArea
-                placeholder="Descripción"
-                onChangeText={handleDescripcionChange}
-                value={descripcion}
-              />
+              <Text style={styles.label}>UBICACION EN TIEMPO REAL</Text>
+
+              <View style={styles.containerImage}>
+                <TouchableOpacity onPress={handleUbication}>
+                  <ImageBackground
+                    source={maps}
+                    style={styles.imageBackground}
+                    resizeMode="cover"
+                  ></ImageBackground>
+                </TouchableOpacity>
+              </View>
             </View>
             <View>
               <Input
-                placeholder="Email"
-                onChangeText={(text) => setEmail(text)}
-                value={email}
+                placeholder="Ingrese la dirección del incidente"
+                onChangeText={(text) => setDireccion(text)}
+                value={direccion}
               />
-              <Button
-                title="Iniciar Sesión"
-                onPress={() => console.log("xs")}
-              />
+              <Button title="Notificar" onPress={() => console.log("xs")} />
             </View>
           </View>
-          {showProfileOptions && (
-            <TouchableWithoutFeedback onPress={toggleProfileOptions}>
-              <View style={styles.overlay}></View>
-            </TouchableWithoutFeedback>
-          )}
-          <View style={styles.absoluteIconsContainer}>
-            <Footer iconName="home" selectedIcon={"home"} />
-            <Footer iconName="map" selectedIcon={null} />
-            <Footer iconName="cog" selectedIcon={null} />
-          </View>
-          {showProfileOptions && (
-            <TouchableWithoutFeedback onPress={toggleProfileOptions}>
-              <View style={styles.profileOptionsContainer}>
-                <TouchableOpacity
-                  onPress={() => navigation.navigate("MiCodigoQR")}
-                  style={styles.profileOption}
-                >
-                  <Icon name="qrcode" size={20} color="#000" />
-                  <Text style={styles.profileOptionText}>Mi código QR</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={() => navigation.navigate("MiCodigoQR")}
-                  style={styles.profileOption}
-                >
-                  <Icon name="gear" size={20} color="#272728" />
-                  <Text style={styles.profileOptionText}>
-                    Ajustes y privacidad
-                  </Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={() => clearUserData()}
-                  style={styles.profileOption}
-                >
-                  <Icon name="sign-out" size={20} color="#272728" />
-                  <Text style={styles.profileOptionText}>Cerrar sesión</Text>
-                </TouchableOpacity>
-              </View>
-            </TouchableWithoutFeedback>
-          )}
-        </View>
-      </TouchableWithoutFeedback>
+        </ScrollView>
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  containerBac: {
     flex: 1,
-    backgroundColor: "#FAFAFF",
+    paddingLeft: 25,
+    paddingRight: 25,
   },
   contentContainer: {
     flex: 1,
@@ -174,40 +135,23 @@ const styles = StyleSheet.create({
   //
   h1: {
     fontFamily: "Montserrat_800ExtraBold",
-    fontSize: 36,
+    fontSize: 29,
     color: "#000000",
     marginBottom: 5,
-    marginTop: 20,
+    marginTop: 40,
     textAlign: "center",
   },
   h2: {
     fontFamily: "Montserrat_800ExtraBold",
     color: "#000",
-    fontSize: 20,
-    marginTop: 15,
+    fontSize: 18,
     marginBottom: 20,
     textAlign: "center",
   },
   content: {
-    flex: 1, // Para que ocupe todo el espacio disponible
-    padding: 20,
+    flex: 1,
   },
   //
-  absoluteIconsContainer: {
-    position: "absolute",
-    width: "100%",
-    backgroundColor: "#FFFFFF",
-    bottom: 0,
-    flexDirection: "row",
-    justifyContent: "center",
-    paddingVertical: 13,
-    borderTopWidth: 1,
-    borderTopColor: "#CCC",
-  },
-  overlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-  },
   profileOptionsContainer: {
     position: "absolute",
     bottom: 0,
@@ -230,5 +174,23 @@ const styles = StyleSheet.create({
   profileOptionText: {
     fontSize: 16,
     marginLeft: 10,
+  },
+  label: {
+    marginTop: 5,
+    marginBottom: 14,
+    fontSize: 16,
+    color: "#000000",
+    fontFamily: "Montserrat_800ExtraBold",
+  },
+  containerImage: {
+    flex: 1,
+  },
+  imageBackground: {
+    flex: 1,
+    width: "100%",
+    height: 100,
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 10,
   },
 });

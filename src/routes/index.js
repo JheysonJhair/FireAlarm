@@ -4,11 +4,10 @@ import Load from "../screens/home/Load";
 import Welcome from "../screens/home/Welcome";
 import Login from "../screens/auth/Login";
 import Register from "../screens/auth/Register";
-import RegisterTwo from "../screens/auth/RegisterTwo";
 import Home from "../screens/home/Home";
 import ForgetPassword from "../screens/auth/ForgetPassword";
-import NewPassword from "../screens/auth/NewPassword";
 import MapDelivery from "../screens/maps/MapDelivery";
+import UserLocation from "../screens/maps/Userlocation";
 
 const Stack = createNativeStackNavigator();
 
@@ -49,11 +48,6 @@ export default function Routes() {
         options={{ headerShown: false }}
       />
       <Stack.Screen
-        name="NewPassword"
-        component={NewPassword}
-        options={{ headerShown: false }}
-      />
-      <Stack.Screen
         name="Login"
         component={Login}
         options={{ headerShown: false }}
@@ -64,14 +58,26 @@ export default function Routes() {
         options={{ headerShown: false }}
       />
       <Stack.Screen
-        name="RegisterTwo"
-        component={RegisterTwo}
-        options={{ headerShown: false }}
-      />
-      <Stack.Screen
         name="Home"
         component={Home}
         options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="Explore"
+        component={UserLocation}
+        options={{
+          headerShown: true,
+          headerStyle: {
+            backgroundColor: "#161B21",
+          },
+          headerTitleStyle: {
+            color: "#fff",
+            textAlign: "center",
+          },
+          headerTitleAlign: "center",
+          headerTintColor: "#fff",
+          title: "Ubicación en tiempo real",
+        }}
       />
     </Stack.Navigator>
   );

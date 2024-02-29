@@ -14,11 +14,8 @@ const Footer = ({ iconName, selectedIcon }) => {
       case "home":
         navigation.navigate("Home");
         break;
-      case "explore":
+      case "map":
         navigation.navigate("Explore");
-        break;
-      case "settings":
-        navigation.navigate("Settings");
         break;
     }
   };
@@ -28,11 +25,11 @@ const Footer = ({ iconName, selectedIcon }) => {
       <TouchableOpacity
         style={{
           ...styles.absoluteIcon,
-          backgroundColor: isSelected ? "#000" : "#FFF",
+          backgroundColor: isSelected ? "#1c2536" : "#FFF",
         }}
         onPress={handlePress}
       >
-        <Icon name={iconName} size={25} color={iconColor} />
+        <Icon name={iconName} size={27} color={iconColor} />
       </TouchableOpacity>
     </View>
   );
@@ -42,8 +39,8 @@ const styles = {
   absoluteIcon: {
     marginHorizontal: 21,
     alignItems: "center",
-    paddingVertical: 0,
-    paddingHorizontal: 5,
+    paddingVertical: 3,
+    paddingHorizontal: 7,
     borderRadius: 5,
   },
 };

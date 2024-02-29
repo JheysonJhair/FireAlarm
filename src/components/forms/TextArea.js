@@ -9,24 +9,24 @@ const TextArea = ({ placeholder, onChangeText, value }) => {
       onChangeText={onChangeText}
       value={value}
       autoCapitalize="none"
-      placeholderTextColor="#C6CBD9"
+      placeholderTextColor="#7899bc"
       multiline
-      numberOfLines={4}
+      numberOfLines={3}
     />
   );
 };
 
 const styles = StyleSheet.create({
   textArea: {
-    backgroundColor: "#212834",
-    borderColor: "#212834",
+    backgroundColor: "#edf0f7",
+    borderColor: "#a8b0c4",
     borderWidth: 1,
     padding: 11,
     borderRadius: 6,
-    color: "white",
+    color: "#000000",
     fontSize: 16,
     width: "100%",
-    marginBottom: 8,
+    marginBottom: 2,
     textAlignVertical: "top",
   },
 });

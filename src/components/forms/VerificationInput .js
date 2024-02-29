@@ -53,7 +53,7 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     color: "#000",
     fontSize: 16,
-    width: "95%",
+    width: "100%",
     marginBottom: 4,
   },
   disabledInput: {

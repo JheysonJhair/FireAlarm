@@ -9,10 +9,6 @@ const FacebookButton = ({ onPress }) => {
   return (
     <TouchableOpacity
       style={{ ...styles.socialButton, backgroundColor: "#2e4466" }}
-      onPress={() => {
-        promptAsync();
-        onPress && onPress();
-      }}
     >
       <Text style={styles.socialButtonText}>F</Text>
     </TouchableOpacity>

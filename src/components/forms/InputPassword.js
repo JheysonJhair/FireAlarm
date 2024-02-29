@@ -41,7 +41,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 6,
     marginVertical: 10,
-    width: "95%",
+    width: "100%",
   },
   notEditable: {
     opacity: 0.5,

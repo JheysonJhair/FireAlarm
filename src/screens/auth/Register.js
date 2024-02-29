@@ -1,17 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { StyleSheet, Text, View, KeyboardAvoidingView } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-
+import PhoneNumberInput from "../../components/forms/PhoneNumberInput ";
 import GoogleButton from "../../components/forms/GoogleButton";
 import FacebookButton from "../../components/forms/FacebookButton";
 import Button from "../../components/forms/Button";
 import Input from "../../components/forms/Input";
 import InputPassword from "../../components/forms/InputPassword";
-import VerificationInput from "../../components/forms/VerificationInput ";
 import StatusModal from "../../components/modals/StatusModal ";
-
-import { verifyEmail, verifyCode } from "../../api/apiLogin";
-
+import { registerUser, loginUser } from "../../api/apiLogin";
 export default function Register() {
   const navigation = useNavigation();
   const [loading, setLoading] = useState(false);
@@ -24,91 +21,73 @@ export default function Register() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [verificationCode, setVerificationCode] = useState("");
+  const [nombre, setNombre] = useState("");
+  const [apellidos, setApellidos] = useState("");
+  const [telefono, setTelefono] = useState("");
 
-  const [isVerified, setIsVerified] = useState(false);
-  const [isCorrect, setIsCorrect] = useState(false);
-  const [isReceivingCode, setIsReceivingCode] = useState(false);
-
-  const onHandleLogin = () => {
-     if (!email || !password || !confirmPassword) {
-       setModalStatus("error");
-       setModalVisible(true);
-       setText("Campos vacios");
-       setText2("Complete todos los campos, es necesario!");
-       return;
-     }
-     if (password !== confirmPassword) {
-       setModalStatus("warning");
-       setModalVisible(true);
-       setText("Advertencia");
-       setText2("Las contraseñas no coinciden!");
-       return;
-     }
-     if (password.length < 8) {
-       setModalStatus("error");
-       setModalVisible(true);
-       setText("Error");
-       setText2("Asegurate de que las contraseñas sea minimo de 8 caracteres!");
-       return;
-     }
-
-    navigation.navigate("RegisterTwo", { email, password });
-    clearForm();
-  };
-
-  const handleReceiveCode = async () => {
-    const emailRegex = /\S+@\S+\.\S+/;
-
-    if (!emailRegex.test(email)) {
+  const onHandleRegister = async () => {
+    if (!nombre || !apellidos || !telefono || !email || !password) {
       setModalStatus("error");
       setModalVisible(true);
-      setText("Correo invalido");
-      setText2(
-        "Por favor, ingresa una dirección de correo electrónico válida."
-      );
+      setText("Campos vacios");
+      setText2("Complete todos los campos, es necesario!");
       return;
     }
+    const phoneNumberRegex = /^\+51\d{9}$/;
 
-    const verificationResponse = await verifyEmail(email);
-
-    if (verificationResponse.status === 200) {
-      setModalStatus("loading");
+    if (!phoneNumberRegex.test(telefono)) {
+      setModalStatus("error");
       setModalVisible(true);
-      setText("Verificando...");
-      setText2(
-        "Te hemos enviado un código a tu correo. Por favor, verifica en la carpeta de spam si no lo encuentras en la bandeja de entrada."
-      );
-      setIsReceivingCode(true);
+      setText("Error");
+      setText2("Asegurate de que sea un número valido!");
+      return;
     }
-  };
-
-  const handleVerficar = async () => {
     try {
-      const verificationResponse = await verifyCode(verificationCode, email);
-      if (verificationResponse.value === true) {
-        setLoading(true);
-        setTimeout(() => {
-          setLoading(false);
-        }, 3000);
+      const response = await registerUser({
+        Email: email,
+        Password: password,
+        FirstName: nombre,
+        LastName: apellidos,
+        PhoneNumber: telefono,
+        ProfileImage:
+          "https://i.pinimg.com/736x/4b/a3/43/4ba343a87d8da59e1e4d0bdf7dc09484.jpg",
+      });
 
-        setIsVerified(true);
-        setIsCorrect(true);
-      } else {
-        setModalStatus("error");
+      if (response.status === 201) {
+        setModalStatus("succes");
         setModalVisible(true);
-        setText("Error");
-        setText2(
-          "Hubo un problema al verificar el codigo. Por favor, inténtalo de nuevo."
+        setText("Registrado con exito");
+        setText2("Usted se registro conrrectamente!");
+        ////
+        const user = await loginUser(email, password);
+        setUserInfo({
+          IdUser: user.value.IdUser,
+          FirstName: user.value.FirstName,
+          LastName: user.value.LastName,
+          BirthDate: user.value.BirthDate,
+          Phone: user.value.Phone,
+          ProfileImage: user.value.ProfileImage,
+          UserName: user.value.UserName,
+          Description: user.value.Description,
+        });
+        navigation.navigate("Home");
+        clearForm();
+      } else {
+        console.error(
+          "Error en la solicitud de registro: Código de estado",
+          response.status
         );
       }
     } catch (error) {
-      console.log(error);
+      console.error("Error en la solicitud de registro", error);
     }
   };
 
   const clearForm = () => {
     setEmail("");
+    setApellidos("");
+    setNombre("");
+    setTelefono("");
     setPassword("");
     setConfirmPassword("");
   };
@@ -126,7 +105,9 @@ export default function Register() {
       return () => clearTimeout(timeout);
     }
   }, [modalVisible]);
-
+  const handlePhoneNumberChange = (phoneNumber) => {
+    setTelefono(phoneNumber);
+  };
   return (
     <KeyboardAvoidingView style={styles.container}>
       <Text style={styles.h1}>FireAlarm</Text>
@@ -137,42 +118,32 @@ export default function Register() {
           placeholder="Email"
           value={email}
           onChangeText={(text) => setEmail(text)}
-          isVerified={isReceivingCode}
+          isVerified={false}
         />
-        {isReceivingCode ? (
-          <View style={styles.formContainer2}>
-            <VerificationInput
-              placeholder="Ingrese el código"
-              onChangeText={(text) => setVerificationCode(text)}
-              value={verificationCode}
-              isVerified={isVerified}
-            />
-            {isCorrect ? (
-              <View style={styles.formContainer2}>
-                <InputPassword
-                  placeholder="Contraseña"
-                  value={password}
-                  onChangeText={(text) => setPassword(text)}
-                  editable={isVerified}
-                />
-                <InputPassword
-                  placeholder="Confirma tu contraseña"
-                  value={confirmPassword}
-                  onChangeText={(text) => setConfirmPassword(text)}
-                  editable={isVerified}
-                />
-                <Button
-                  title="Siguiente paso"
-                  onPress={() => onHandleLogin()}
-                />
-              </View>
-            ) : (
-              <Button title="Verificar" onPress={() => handleVerficar()} />
-            )}
-          </View>
-        ) : (
-          <Button title="Recibir Código" onPress={() => handleReceiveCode()} />
-        )}
+        <Input
+          placeholder="Nombre"
+          value={nombre}
+          onChangeText={(text) => setNombre(text)}
+        />
+        <Input
+          placeholder="Apellidos"
+          value={apellidos}
+          onChangeText={(text) => setApellidos(text)}
+        />
+        <InputPassword
+          placeholder="Contraseña"
+          value={password}
+          onChangeText={(text) => setPassword(text)}
+          editable={true}
+        />
+        <InputPassword
+          placeholder="Confirma tu contraseña"
+          value={confirmPassword}
+          onChangeText={(text) => setConfirmPassword(text)}
+          editable={true}
+        />
+        <PhoneNumberInput onPhoneNumberChange={handlePhoneNumberChange} />
+        <Button title="REGISTRATE" onPress={() => onHandleRegister()} />
       </View>
 
       <View style={styles.texto}>
