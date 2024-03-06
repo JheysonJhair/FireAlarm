@@ -1,24 +1,61 @@
 import React, { useEffect } from "react";
-import { Text, StyleSheet, View, KeyboardAvoidingView, Alert } from "react-native";
+import {
+  Text,
+  StyleSheet,
+  View,
+  KeyboardAvoidingView,
+  Vibration,
+} from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { Location } from 'expo';
 import {
   useFonts,
   Montserrat_800ExtraBold,
 } from "@expo-google-fonts/montserrat";
-
+import * as Notifications from "expo-notifications";
 import Button from "../../components/forms/Button";
 import ButtonTwo from "../../components/forms/ButtonTwo";
+import { schedulePushNotification } from "../../hooks/NotificationService";
+
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: false,
+    shouldSetBadge: false,
+  }),
+});
 
 const Welcome = () => {
+  const ONE_SECOND_IN_MS = 1000;
   const navigation = useNavigation();
   const [fontsLoaded] = useFonts({
     Montserrat_800ExtraBold,
   });
 
+  useEffect(() => {
+    Notifications.addNotificationReceivedListener(handleNotificationReceived);
+    return () => {
+      Notifications.removeNotificationReceivedListener(
+        handleNotificationReceived
+      );
+    };
+  }, []);
+
+  const handleNotificationReceived = () => {
+    
+    Vibration.vibrate(5 * ONE_SECOND_IN_MS);
+  };
+
   if (!fontsLoaded) {
     return null;
   }
+
+  const handleScheduleNotification = () => {
+    const scheduledTime = new Date();
+    scheduledTime.setSeconds(scheduledTime.getSeconds() + 10);
+    schedulePushNotification("Probando notificacion", scheduledTime);
+  };
+  
+  
 
   return (
     <KeyboardAvoidingView style={styles.container}>
@@ -33,6 +70,10 @@ const Welcome = () => {
         <ButtonTwo
           title="Ingresar"
           onPress={() => navigation.navigate("Login")}
+        />
+        <ButtonTwo
+          title="Programar Notificación"
+          onPress={handleScheduleNotification}
         />
       </View>
 
