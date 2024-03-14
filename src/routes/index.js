@@ -8,6 +8,10 @@ import Home from "../screens/home/Home";
 import ForgetPassword from "../screens/auth/ForgetPassword";
 import MapDelivery from "../screens/maps/MapDelivery";
 import UserLocation from "../screens/maps/Userlocation";
+import Options from "../screens/home/Options";
+import Reporte from "../screens/home/Reporte";
+import Notify from "../screens/admin/Notify";
+import NotificationDetail from "../screens/admin/NotificationDetail";
 
 const Stack = createNativeStackNavigator();
 
@@ -63,8 +67,8 @@ export default function Routes() {
         options={{ headerShown: false }}
       />
       <Stack.Screen
-        name="Explore"
-        component={UserLocation}
+        name="Options"
+        component={Options}
         options={{
           headerShown: true,
           headerStyle: {
@@ -76,7 +80,58 @@ export default function Routes() {
           },
           headerTitleAlign: "center",
           headerTintColor: "#fff",
-          title: "Ubicación en tiempo real",
+          title: "",
+        }}
+      />
+      <Stack.Screen
+        name="Reporte"
+        component={Reporte}
+        options={{
+          headerShown: true,
+          headerStyle: {
+            backgroundColor: "#161B21",
+          },
+          headerTitleStyle: {
+            color: "#fff",
+            textAlign: "center",
+          },
+          headerTitleAlign: "center",
+          headerTintColor: "#fff",
+          title: "",
+        }}
+      />
+      <Stack.Screen
+        name="Admin"
+        component={Notify}
+        options={{
+          headerShown: true,
+          headerStyle: {
+            backgroundColor: "#161B21",
+          },
+          headerTitleStyle: {
+            color: "#fff",
+            textAlign: "center",
+          },
+          headerTitleAlign: "center",
+          headerTintColor: "#fff",
+          title: "",
+        }}
+      />
+      <Stack.Screen
+        name="Information"
+        component={NotificationDetail}
+        options={{
+          headerShown: true,
+          headerStyle: {
+            backgroundColor: "#161B21",
+          },
+          headerTitleStyle: {
+            color: "#fff",
+            textAlign: "center",
+          },
+          headerTitleAlign: "center",
+          headerTintColor: "#fff",
+          title: "Información",
         }}
       />
     </Stack.Navigator>

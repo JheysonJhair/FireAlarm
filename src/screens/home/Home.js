@@ -6,7 +6,6 @@ import {
   StyleSheet,
   TouchableOpacity,
   ImageBackground,
-  TouchableWithoutFeedback,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -14,10 +13,8 @@ import Button from "../../components/forms/Button";
 import Input from "../../components/forms/Input";
 import TextArea from "../../components/forms/TextArea";
 import ImagePickerComponent from "../../components/forms/ImagePickerComponent ";
-import Footer from "../../components/utils/Footer";
 import { useNavigation } from "@react-navigation/native";
 
-import { useUser } from "../../components/utils/UserContext";
 
 const maps = require("../../assets/img/maps.png");
 
@@ -25,7 +22,6 @@ export default function Home() {
   const navigation = useNavigation();
   const [selectedCategory, setSelectedCategory] = useState("Para ti");
   const [showProfileOptions, setShowProfileOptions] = useState(false);
-  const { userData } = useUser();
   const [descripcion, setDescripcion] = useState("");
   const MAX_CARACTERES = 80;
   const [direccion, setDireccion] = useState("");

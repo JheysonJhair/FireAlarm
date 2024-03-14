@@ -11,6 +11,10 @@
       [
         "expo-notifications",
         {
+          "icon": "./assets/notification-icon.png",
+          "color": "#ffffff",
+          "sounds": ["./assets/notification-sound.wav"], 
+          "vibrationPattern": [0, 250, 250, 250]
         }
       ],
       [

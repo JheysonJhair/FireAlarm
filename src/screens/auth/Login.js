@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import Checkbox from "expo-checkbox";
 import { StyleSheet, Text, View, KeyboardAvoidingView } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import Button from "../../components/forms/Button";
 import Input from "../../components/forms/Input";
@@ -28,8 +28,6 @@ export default function Login() {
   const [password, setPassword] = useState("");
   console.log(isChecked);
   const onHandleLogin = async (email, password) => {
-    ///xddd
-    navigation.navigate("Home");
     try {
       if (!email || !password) {
         setModalStatus("error");
@@ -38,7 +36,12 @@ export default function Login() {
         setText2("Complete todos los campos, es necesario!");
         return;
       }
-
+      if (email == "admin" && password == "admin") {
+        navigation.navigate("Admin");
+      }
+      if (email == "user" && password == "user") {
+        navigation.navigate("Options");
+      }
       const emailRegex = /\S+@\S+\.\S+/;
       if (!emailRegex.test(email)) {
         setModalStatus("error");
@@ -53,7 +56,7 @@ export default function Login() {
       if (user.msg == "Ingreso correctamente") {
         if (isChecked) {
           saveUserData();
-        } 
+        }
         setUserInfo({
           IdUser: user.value.IdUser,
           FirstName: user.value.FirstName,
@@ -70,7 +73,7 @@ export default function Login() {
 
         const age = today.getFullYear() - birthDate.getFullYear();
         if (age >= 16 || birthDate) {
-          navigation.navigate("Home");
+          navigation.navigate("Options");
         } else {
           setModalStatus("warning");
           setModalVisible(true);
@@ -98,11 +101,14 @@ export default function Login() {
   ///
   const saveUserData = async () => {
     try {
-      await AsyncStorage.setItem("userData", JSON.stringify({ email, password }));
+      await AsyncStorage.setItem(
+        "userData",
+        JSON.stringify({ email, password })
+      );
     } catch (error) {
       console.error("Error al guardar datos de usuario:", error);
     }
-  }
+  };
   const clearUserData = async () => {
     try {
       await AsyncStorage.removeItem("userData");
