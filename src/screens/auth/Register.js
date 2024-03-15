@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { StyleSheet, Text, View, KeyboardAvoidingView } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+
 import PhoneNumberInput from "../../components/forms/PhoneNumberInput ";
 import GoogleButton from "../../components/forms/GoogleButton";
 import FacebookButton from "../../components/forms/FacebookButton";
@@ -8,10 +9,11 @@ import Button from "../../components/forms/Button";
 import Input from "../../components/forms/Input";
 import InputPassword from "../../components/forms/InputPassword";
 import StatusModal from "../../components/modals/StatusModal ";
+
 import { registerUser, loginUser } from "../../api/apiLogin";
+
 export default function Register() {
   const navigation = useNavigation();
-  const [loading, setLoading] = useState(false);
 
   const [modalVisible, setModalVisible] = useState(false);
   const [modalStatus, setModalStatus] = useState("error");
@@ -49,8 +51,6 @@ export default function Register() {
         FirstName: nombre,
         LastName: apellidos,
         PhoneNumber: telefono,
-        ProfileImage:
-          "https://i.pinimg.com/736x/4b/a3/43/4ba343a87d8da59e1e4d0bdf7dc09484.jpg",
       });
 
       if (response.status === 201) {
@@ -58,19 +58,9 @@ export default function Register() {
         setModalVisible(true);
         setText("Registrado con exito");
         setText2("Usted se registro conrrectamente!");
-        ////
+
         const user = await loginUser(email, password);
-        setUserInfo({
-          IdUser: user.value.IdUser,
-          FirstName: user.value.FirstName,
-          LastName: user.value.LastName,
-          BirthDate: user.value.BirthDate,
-          Phone: user.value.Phone,
-          ProfileImage: user.value.ProfileImage,
-          UserName: user.value.UserName,
-          Description: user.value.Description,
-        });
-        navigation.navigate("Home");
+        navigation.navigate("Options");
         clearForm();
       } else {
         console.error(

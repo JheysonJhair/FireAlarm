@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import Checkbox from "expo-checkbox";
 import { StyleSheet, Text, View, KeyboardAvoidingView } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import Button from "../../components/forms/Button";
 import Input from "../../components/forms/Input";
@@ -12,21 +11,19 @@ import FacebookButton from "../../components/forms/FacebookButton";
 import StatusModal from "../../components/modals/StatusModal ";
 
 import { loginUser } from "../../api/apiLogin";
-import { useUser } from "../../components/utils/UserContext";
 
 export default function Login() {
   const navigation = useNavigation();
+
   const [modalVisible, setModalVisible] = useState(false);
   const [modalStatus, setModalStatus] = useState("error");
   const [text, setText] = useState("");
   const [text2, setText2] = useState("");
 
-  const { setUserInfo } = useUser();
-
   const [isChecked, setChecked] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  console.log(isChecked);
+
   const onHandleLogin = async (email, password) => {
     try {
       if (!email || !password) {
@@ -39,9 +36,11 @@ export default function Login() {
       if (email == "admin" && password == "admin") {
         navigation.navigate("Admin");
       }
+      //
       if (email == "user" && password == "user") {
         navigation.navigate("Options");
       }
+      //
       const emailRegex = /\S+@\S+\.\S+/;
       if (!emailRegex.test(email)) {
         setModalStatus("error");
@@ -54,32 +53,11 @@ export default function Login() {
       const user = await loginUser(email, password);
 
       if (user.msg == "Ingreso correctamente") {
-        if (isChecked) {
-          saveUserData();
-        }
-        setUserInfo({
-          IdUser: user.value.IdUser,
-          FirstName: user.value.FirstName,
-          LastName: user.value.LastName,
-          BirthDate: user.value.BirthDate,
-          Phone: user.value.Phone,
-          ProfileImage: user.value.ProfileImage,
-          UserName: user.value.UserName,
-          Description: user.value.Description,
-        });
-
-        const birthDate = new Date(user.birthDate);
-        const today = new Date();
-
-        const age = today.getFullYear() - birthDate.getFullYear();
-        if (age >= 16 || birthDate) {
-          navigation.navigate("Options");
-        } else {
-          setModalStatus("warning");
-          setModalVisible(true);
-          setText("Opps! menor de edad");
-          setText2("Usted no cumple con los requisitos mínimos");
-        }
+        setModalStatus("succes");
+        setModalVisible(true);
+        setText("Ingreso!");
+        setText2(`Bienvenido ${user.FirstName}`);
+        navigation.navigate("Options");
       } else {
         setModalStatus("error");
         setModalVisible(true);
@@ -98,25 +76,6 @@ export default function Login() {
     navigation.navigate("ForgetPassword");
   };
 
-  ///
-  const saveUserData = async () => {
-    try {
-      await AsyncStorage.setItem(
-        "userData",
-        JSON.stringify({ email, password })
-      );
-    } catch (error) {
-      console.error("Error al guardar datos de usuario:", error);
-    }
-  };
-  const clearUserData = async () => {
-    try {
-      await AsyncStorage.removeItem("userData");
-    } catch (error) {
-      console.error("Error al borrar datos de usuario:", error);
-    }
-  };
-  ///
   useEffect(() => {
     if (modalVisible) {
       const timeout = setTimeout(() => {

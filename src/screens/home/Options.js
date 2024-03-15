@@ -1,5 +1,11 @@
 import React from "react";
-import { Text, StyleSheet, View, KeyboardAvoidingView } from "react-native";
+import {
+  StyleSheet,
+  View,
+  KeyboardAvoidingView,
+  Image,
+  Dimensions,
+} from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import {
   useFonts,
@@ -17,10 +23,22 @@ const Options = () => {
   if (!fontsLoaded) {
     return null;
   }
+
+  const windowWidth = Dimensions.get("window").width;
+
   return (
     <KeyboardAvoidingView style={styles.container}>
-      <Text style={styles.h2}>Seleccione una opcion!</Text>
-
+      <View style={styles.imageContainer}>
+        <Image
+          source={require("../../assets/svg/option.png")}
+          style={{
+            width: windowWidth * 0.9,
+            height: undefined,
+            aspectRatio: 1,
+          }}
+          resizeMode="contain"
+        />
+      </View>
       <View style={styles.formContainer}>
         <Button
           title="Ver Reporte"
@@ -45,6 +63,10 @@ const styles = StyleSheet.create({
   },
   formContainer: {
     width: "80%",
+  },
+  imageContainer: {
+    alignItems: "center",
+    marginBottom: 20,
   },
   h2: {
     fontFamily: "Montserrat_800ExtraBold",

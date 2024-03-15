@@ -1,23 +1,26 @@
 import React from "react";
-import { View, Text, StyleSheet, Button, Image } from "react-native";
+import { View, Text, StyleSheet, Image } from "react-native";
+import Button from "../../components/forms/Button";
+import { useNavigation } from "@react-navigation/native";
 
-const Reporte = ({ navigation }) => {
+const Reporte = () => {
+  const navigation = useNavigation();
+  const handleHome = () => {
+    navigation.navigate("Home");
+  };
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Reporte Realizado</Text>
       <View style={styles.reportContainer}>
         <Image source={require("../../assets/logo.png")} style={styles.image} />
         <View style={styles.textContainer}>
-          <Text style={styles.reportTitle}>
-            Medida de prevención contra incendios
-          </Text>
-          <Text style={styles.location}>Olivo- Abcany</Text>
+          <Text style={styles.reportTitle}>Incendio Reportado</Text>
+          <Text style={styles.location}>Olivo/Abancay/Apurimac</Text>
         </View>
         <View style={styles.dateContainer}>
-          <Text style={styles.date}>12/12/12</Text>
+          <Text style={styles.date}>06/12/2024</Text>
         </View>
       </View>
-      <Button title="Volver" onPress={() => navigation.goBack()} />
+      <Button title="Otro reporte" onPress={() => handleHome()} />
     </View>
   );
 };
@@ -28,19 +31,13 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: "#fff",
   },
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 20,
-    color: "#333",
-  },
   reportContainer: {
     flexDirection: "row",
     alignItems: "center",
     marginBottom: 20,
     padding: 10,
     backgroundColor: "#fff",
-    borderRadius: 10,
+    borderRadius: 5,
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
@@ -54,7 +51,7 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     marginRight: 10,
-    borderRadius: 25,
+    borderRadius: 5,
   },
   textContainer: {
     flex: 1,

@@ -8,17 +8,21 @@ import {
 } from "react-native";
 import Notification from "../../components/admin/Notification";
 import * as Location from "expo-location";
+
 import LoadingIndicator from "../../components/modals/LoadingIndicator";
-import { fetchData } from "../../api/apiFire";
+import { fetchNotify } from "../../api/apiFire";
 import { useNavigation } from "@react-navigation/native";
+
 function Notify() {
   const [notifications, setNotifications] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+
   const navigation = useNavigation();
+
   useEffect(() => {
     const getData = async () => {
       try {
-        const data = await fetchData();
+        const data = await fetchNotify();
         setNotifications(data);
         setIsLoading(false);
       } catch (error) {
@@ -33,20 +37,6 @@ function Notify() {
     navigation.navigate("Information", { notification });
   };
 
-  useEffect(() => {
-    const fetchAddresses = async () => {
-      try {
-        const { status } = await Location.requestForegroundPermissionsAsync();
-        if (status !== "granted") {
-          console.error("Permission to access location was denied");
-          return;
-        }
-      } catch (error) {
-        console.error("Error obtaining addresses:", error);
-      }
-    };
-  }, [notifications]);
-
   const formatDate = (dateString) => {
     const dateParts = dateString.split("T");
     return dateParts[0];
@@ -55,7 +45,6 @@ function Notify() {
   return (
     <View style={styles.container}>
       <View style={styles.content}>
-        <Text style={styles.title}>Notificaciones</Text>
         {isLoading ? (
           <LoadingIndicator />
         ) : (

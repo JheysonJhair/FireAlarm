@@ -1,10 +1,5 @@
 import React from "react";
-import {
-  Text,
-  StyleSheet,
-  View,
-  KeyboardAvoidingView,
-} from "react-native";
+import { Text, StyleSheet, View, KeyboardAvoidingView } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import {
   useFonts,

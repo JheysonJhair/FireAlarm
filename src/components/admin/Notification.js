@@ -6,18 +6,18 @@ const Notification = ({ imageSource, location, date, status }) => {
   let statusIcon;
   switch (status) {
     case "amarillo":
-      statusIcon = <Icon name="exclamation-circle" size={20} color="#FFC107" />;
+      statusIcon = <Icon name="exclamation-circle" size={30} color="#FFC107" />;
       break;
     case "rojo":
       statusIcon = (
-        <Icon name="exclamation-triangle" size={20} color="#FF0000" />
+        <Icon name="exclamation-triangle" size={30} color="#FF0000" />
       );
       break;
     case "verde":
-      statusIcon = <Icon name="check-circle" size={20} color="#4CAF50" />;
+      statusIcon = <Icon name="check-circle" size={30} color="#4CAF50" />;
       break;
     default:
-      statusIcon = <Icon name="circle" size={20} color="#000000" />;
+      statusIcon = <Icon name="circle" size={30} color="#000000" />;
   }
 
   return (

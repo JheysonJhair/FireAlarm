@@ -6,8 +6,7 @@ import Login from "../screens/auth/Login";
 import Register from "../screens/auth/Register";
 import Home from "../screens/home/Home";
 import ForgetPassword from "../screens/auth/ForgetPassword";
-import MapDelivery from "../screens/maps/MapDelivery";
-import UserLocation from "../screens/maps/Userlocation";
+import MapLocation from "../screens/maps/MapLocation";
 import Options from "../screens/home/Options";
 import Reporte from "../screens/home/Reporte";
 import Notify from "../screens/admin/Notify";
@@ -26,7 +25,7 @@ export default function Routes() {
 
       <Stack.Screen
         name="mapLocation"
-        component={MapDelivery}
+        component={MapLocation}
         options={{
           headerShown: true,
           headerStyle: {
@@ -80,7 +79,7 @@ export default function Routes() {
           },
           headerTitleAlign: "center",
           headerTintColor: "#fff",
-          title: "",
+          title: "Seleccione una opción",
         }}
       />
       <Stack.Screen
@@ -97,7 +96,7 @@ export default function Routes() {
           },
           headerTitleAlign: "center",
           headerTintColor: "#fff",
-          title: "",
+          title: "Reporte realizado",
         }}
       />
       <Stack.Screen
@@ -114,7 +113,7 @@ export default function Routes() {
           },
           headerTitleAlign: "center",
           headerTintColor: "#fff",
-          title: "",
+          title: "Notificaciones",
         }}
       />
       <Stack.Screen
