@@ -10,6 +10,7 @@ import GoogleButton from "../../components/forms/GoogleButton";
 import FacebookButton from "../../components/forms/FacebookButton";
 import StatusModal from "../../components/modals/StatusModal ";
 
+import { useUser } from "../../hooks/UserContext";
 import { loginUser } from "../../api/apiLogin";
 
 export default function Login() {
@@ -20,9 +21,11 @@ export default function Login() {
   const [text, setText] = useState("");
   const [text2, setText2] = useState("");
 
+  const { setUserInfo } = useUser();
+
   const [isChecked, setChecked] = useState(false);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("prueba@gmail.com");
+  const [password, setPassword] = useState("12345678");
 
   const onHandleLogin = async (email, password) => {
     try {
@@ -48,6 +51,15 @@ export default function Login() {
       const user = await loginUser(email, password);
 
       if (user.msg == "Ingreso correctamente") {
+        setUserInfo({
+          IdUsuario: user.value.IdUsuario,
+          Email: user.value.Email,
+          Contrasena: user.value.Contrasena,
+          Nombre: user.value.Nombre,
+          Apellido: user.value.Apellido,
+          Telefono: user.value.Telefono,
+        });
+
         setModalStatus("success");
         setModalVisible(true);
         setText("Ingreso!");

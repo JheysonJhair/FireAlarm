@@ -11,7 +11,7 @@ import InputPassword from "../../components/forms/InputPassword";
 import StatusModal from "../../components/modals/StatusModal ";
 
 import { registerUser, loginUser } from "../../api/apiLogin";
-
+import { useUser } from "../../hooks/UserContext";
 export default function Register() {
   const navigation = useNavigation();
 
@@ -19,6 +19,8 @@ export default function Register() {
   const [modalStatus, setModalStatus] = useState("error");
   const [text, setText] = useState("");
   const [text2, setText2] = useState("");
+
+  const { setUserInfo } = useUser();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -69,6 +71,14 @@ export default function Register() {
         setText2("Usted se registro conrrectamente!");
 
         const user = await loginUser(email, password);
+        setUserInfo({
+          IdUsuario: user.value.IdUsuario,
+          Email: user.value.Email,
+          Contrasena: user.value.Contrasena,
+          Nombre: user.value.Nombre,
+          Apellido: user.value.Apellido,
+          Telefono: user.value.Telefono,
+        });
         navigation.navigate("Options");
         clearForm();
       } else {

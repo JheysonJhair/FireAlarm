@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { StatusBar } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import * as NavigationBar from "expo-navigation-bar";
+import { UserProvider } from "./src/hooks/UserContext";
 
 import Routes from "./src/routes";
 import "@expo-google-fonts/montserrat";
@@ -22,9 +23,11 @@ export default function App() {
     changeNavigationBarColor();
   }, []);
   return (
-    <NavigationContainer>
-      <StatusBar backgroundColor="#000" barStyle="light-content" />
-      <Routes />
-    </NavigationContainer>
+    <UserProvider>
+      <NavigationContainer>
+        <StatusBar backgroundColor="#000" barStyle="light-content" />
+        <Routes />
+      </NavigationContainer>
+    </UserProvider>
   );
 }

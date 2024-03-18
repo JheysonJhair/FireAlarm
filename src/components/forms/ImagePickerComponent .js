@@ -1,21 +1,13 @@
 import React, { useState } from "react";
-import {
-  View,
-  Image,
-  TouchableOpacity,
-  Text,
-  StyleSheet,
-  Dimensions,
-} from "react-native";
+import { View, Image, TouchableOpacity, Text, StyleSheet, Dimensions } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 
-const ImagePickerComponent = () => {
+const ImagePickerComponent = ({ onImageSelected }) => {
   const [image, setImage] = useState(null);
 
   const pickImage = async () => {
-    const permissionResult =
-      await ImagePicker.requestMediaLibraryPermissionsAsync();
+    const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (permissionResult.granted === false) {
       alert("Permission to access camera roll is required!");
       return;
@@ -27,6 +19,7 @@ const ImagePickerComponent = () => {
     }
 
     setImage(pickerResult.uri);
+    onImageSelected(pickerResult.uri); 
   };
 
   return (
@@ -50,8 +43,6 @@ const ImagePickerComponent = () => {
     </View>
   );
 };
-
-const windowWidth = Dimensions.get("window").width;
 
 const styles = StyleSheet.create({
   container: {

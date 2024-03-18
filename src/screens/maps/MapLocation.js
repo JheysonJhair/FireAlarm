@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from "react";
 import MapView, { Marker, Polyline } from "react-native-maps";
 import { StyleSheet, View, Image } from "react-native";
-import MapViewDirections from "react-native-maps-directions";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-
+import Buttonn from "../../components/forms/Buttonn";
+import StatusModal from "../../components/modals/StatusModal ";
 
 function MapLocation() {
   const [selectedLocation, setSelectedLocation] = useState(null);
-  const [temperature, setTemperature] = useState("");
 
   const [modalVisible, setModalVisible] = useState(false);
   const [modalStatus, setModalStatus] = useState("error");
@@ -19,6 +17,23 @@ function MapLocation() {
     setSelectedLocation(coordinate);
   };
 
+  const handleLocation = () => {
+    setModalStatus("success");
+    setModalVisible(true);
+    setText("Ubicacion seleccionado");
+    setText2("La ubicacion del incendio ah sido actualizado");
+  };
+
+  useEffect(() => {
+    if (modalVisible) {
+      const timeout = setTimeout(() => {
+        setModalVisible(false);
+      }, 3000);
+
+      return () => clearTimeout(timeout);
+    }
+  }, [modalVisible]);
+  
   return (
     <View style={styles.container}>
       <MapView
@@ -40,6 +55,18 @@ function MapLocation() {
           </Marker>
         )}
       </MapView>
+      <View style={styles.buttonContainer}>
+        <Buttonn
+          title="Aceptar "
+          onPress={handleLocation}
+        />
+      </View>
+      <StatusModal
+        visible={modalVisible}
+        status={modalStatus}
+        text={text}
+        text2={text2}
+      />
     </View>
   );
 }
@@ -51,6 +78,14 @@ const styles = StyleSheet.create({
   map: {
     width: "100%",
     height: "100%",
+  },
+  buttonContainer: {
+    position: "absolute",
+    textAlign: "center",
+    justifyContent: "center",
+    bottom: 20,
+    right: 8,
+    zIndex: 1,
   },
 });
 
