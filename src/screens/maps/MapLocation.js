@@ -3,9 +3,11 @@ import MapView, { Marker, Polyline } from "react-native-maps";
 import { StyleSheet, View, Image } from "react-native";
 import Buttonn from "../../components/forms/Buttonn";
 import StatusModal from "../../components/modals/StatusModal ";
+import { useNavigation } from "@react-navigation/native";
 
 function MapLocation() {
   const [selectedLocation, setSelectedLocation] = useState(null);
+  const navigation = useNavigation();
 
   const [modalVisible, setModalVisible] = useState(false);
   const [modalStatus, setModalStatus] = useState("error");
@@ -15,6 +17,7 @@ function MapLocation() {
   const handleMapPress = (event) => {
     const { coordinate } = event.nativeEvent;
     setSelectedLocation(coordinate);
+
   };
 
   const handleLocation = () => {
@@ -22,6 +25,7 @@ function MapLocation() {
     setModalVisible(true);
     setText("Ubicacion seleccionado");
     setText2("La ubicacion del incendio ah sido actualizado");
+    navigation.navigate('Home', { selectedLocation });
   };
 
   useEffect(() => {

@@ -6,7 +6,6 @@ import {
   StyleSheet,
   TouchableOpacity,
   ImageBackground,
-  Alert,
 } from "react-native";
 import Button from "../../components/forms/Button";
 import TextArea from "../../components/forms/TextArea";
@@ -18,11 +17,12 @@ import StatusModal from "../../components/modals/StatusModal ";
 
 const maps = require("../../assets/img/maps.png");
 
-export default function Home() {
+export default function Home({ route }) {
   const navigation = useNavigation();
   const { userData } = useUser();
   const [descripcion, setDescripcion] = useState("");
   const [image, setImage] = useState(null);
+  const [selectedLocation, setSelectedLocation] = useState(null);
 
   const [modalVisible, setModalVisible] = useState(false);
   const [modalStatus, setModalStatus] = useState("error");
@@ -47,14 +47,14 @@ export default function Home() {
 
   const handleNotificar = async () => {
     try {
-      if (!descripcion || !image ) {
+      if (!descripcion || !image || !selectedLocation) {
         setModalStatus("error");
         setModalVisible(true);
         setText("Campos vacios");
         setText2("Complete todos los campos, es necesario!");
         return;
       }
-      
+
       const formData = new FormData();
       formData.append("file", {
         uri: image,
@@ -63,15 +63,15 @@ export default function Home() {
       });
 
       formData.append("Descripcion", descripcion);
-      formData.append("Latitud", 40.7128);
-      formData.append("Longitud", -74.006);
+      formData.append("Latitud", selectedLocation.latitude);
+      formData.append("Longitud", selectedLocation.longitude);
       formData.append("IdUsuario", userData.IdUsuario);
 
       const response = await registerIncendio(formData);
 
       if (response.data.msg == "Se creo correctamente") {
-        setDescripcion("")
-        setImage(null)
+        setDescripcion("");
+        setImage(null);
         setModalStatus("success");
         setModalVisible(true);
         setText(" Incendio reportado!");
@@ -91,14 +91,19 @@ export default function Home() {
       return () => clearTimeout(timeout);
     }
   }, [modalVisible]);
+
+  useEffect(() => {
+    if (route.params?.selectedLocation) {
+      setSelectedLocation(route.params.selectedLocation);
+    }
+  }, [route.params?.selectedLocation]);
+
   return (
     <View style={styles.contentContainer}>
       <View style={styles.content}>
         <View>
           <Text style={styles.h1}>FireAlarm</Text>
-          <Text style={styles.h2}>
-            Señala aquí lo que está pasando
-          </Text>
+          <Text style={styles.h2}>Señala aquí lo que está pasando</Text>
         </View>
         <ScrollView style={styles.containerBac}>
           <View>
@@ -128,9 +133,13 @@ export default function Home() {
                 </TouchableOpacity>
               </View>
             </View>
-            <Text style={styles.label2}>
-                Ubicacion:
+            <View style={styles.ubicacionContainer}>
+              <Text style={styles.label2}>Ubicacion: </Text>
+              <Text style={styles.label3}>
+                {selectedLocation ? "Seleccionado" : "No seleccionado"}
               </Text>
+            </View>
+
             <View>
               <Button title="Notificar" onPress={handleNotificar} />
             </View>
@@ -219,6 +228,13 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#000000",
   },
+  label3: {
+    marginTop: 5,
+    marginBottom: 14,
+    fontSize: 17,
+    color: "#393ea0",
+    fontWeight: "bold",
+  },
   containerImage: {
     flex: 1,
   },
@@ -229,5 +245,9 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     marginBottom: 10,
+  },
+  ubicacionContainer: {
+    flexDirection: "row",
+    alignItems: "center",
   },
 });

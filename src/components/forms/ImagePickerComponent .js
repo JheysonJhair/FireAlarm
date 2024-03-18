@@ -1,32 +1,71 @@
 import React, { useState } from "react";
-import { View, Image, TouchableOpacity, Text, StyleSheet, Dimensions } from "react-native";
+import {
+  View,
+  Image,
+  TouchableOpacity,
+  Text,
+  StyleSheet,
+} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 
 const ImagePickerComponent = ({ onImageSelected }) => {
   const [image, setImage] = useState(null);
 
-  const pickImage = async () => {
-    const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+  const pickImage = async (sourceType) => {
+    const permissionResult =
+      await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (permissionResult.granted === false) {
       alert("Permission to access camera roll is required!");
       return;
     }
 
-    const pickerResult = await ImagePicker.launchImageLibraryAsync();
+    let pickerResult;
+    if (sourceType === "camera") {
+      pickerResult = await ImagePicker.launchCameraAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 1,
+        base64: true,
+      });
+    } else {
+      pickerResult = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 1,
+        base64: true,
+      });
+    }
+
     if (pickerResult.cancelled === true) {
       return;
     }
 
     setImage(pickerResult.uri);
-    onImageSelected(pickerResult.uri); 
+    onImageSelected(pickerResult.uri);
+  };
+
+  const selectFromCamera = () => {
+    pickImage("camera");
+  };
+
+  const selectFromGallery = () => {
+    pickImage("gallery");
   };
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity style={styles.button} onPress={pickImage}>
-        <Text style={styles.buttonText}>Subir evidencia</Text>
+    <View style={styles.contButton}>
+      <TouchableOpacity style={[styles.button, styles.buttonLarge]} onPress={selectFromGallery}>
+        <Text style={styles.buttonText}>Seleccionar de galería</Text>
       </TouchableOpacity>
+      <TouchableOpacity style={[styles.button, styles.buttonSmall]} onPress={selectFromCamera}>
+        <Text style={styles.buttonText}><Ionicons name="camera" size={24} color="white" /></Text>
+      </TouchableOpacity>
+    </View>
+
       {image && (
         <Image
           source={{ uri: image }}
@@ -61,6 +100,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     height: 45,
     width: "100%",
+    marginBottom: 10,
   },
   buttonText: {
     color: "white",
@@ -86,6 +126,18 @@ const styles = StyleSheet.create({
   placeholderText: {
     color: "#3c4e70",
     marginTop: 10,
+  },
+  //
+  contButton: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  buttonSmall: {
+    flex: 1, 
+    marginLeft: 10, 
+  },
+  buttonLarge: {
+    flex: 10, 
   },
 });
 
