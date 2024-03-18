@@ -35,6 +35,15 @@ export default function Register() {
       setText2("Complete todos los campos, es necesario!");
       return;
     }
+
+    if (password !== confirmPassword) {
+      setModalStatus("warning");
+      setModalVisible(true);
+      setText("Advertencia");
+      setText2("Las contraseñas no coinciden!");
+      return;
+    }
+    
     const phoneNumberRegex = /^\+51\d{9}$/;
 
     if (!phoneNumberRegex.test(telefono)) {
@@ -47,14 +56,14 @@ export default function Register() {
     try {
       const response = await registerUser({
         Email: email,
-        Password: password,
-        FirstName: nombre,
-        LastName: apellidos,
-        PhoneNumber: telefono,
+        Contrasena: password,
+        Nombre: nombre,
+        Apellido: apellidos,
+        Telefono: telefono,
       });
 
       if (response.status === 201) {
-        setModalStatus("succes");
+        setModalStatus("success");
         setModalVisible(true);
         setText("Registrado con exito");
         setText2("Usted se registro conrrectamente!");
@@ -63,10 +72,11 @@ export default function Register() {
         navigation.navigate("Options");
         clearForm();
       } else {
-        console.error(
-          "Error en la solicitud de registro: Código de estado",
-          response.status
-        );
+        setModalStatus("error");
+        setModalVisible(true);
+        setText("Error");
+        setText2("Ya existe una cuenta con este gmail!");
+        
       }
     } catch (error) {
       console.error("Error en la solicitud de registro", error);

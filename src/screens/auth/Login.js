@@ -36,11 +36,6 @@ export default function Login() {
       if (email == "admin" && password == "admin") {
         navigation.navigate("Admin");
       }
-      //
-      if (email == "user" && password == "user") {
-        navigation.navigate("Options");
-      }
-      //
       const emailRegex = /\S+@\S+\.\S+/;
       if (!emailRegex.test(email)) {
         setModalStatus("error");
@@ -53,10 +48,10 @@ export default function Login() {
       const user = await loginUser(email, password);
 
       if (user.msg == "Ingreso correctamente") {
-        setModalStatus("succes");
+        setModalStatus("success");
         setModalVisible(true);
         setText("Ingreso!");
-        setText2(`Bienvenido ${user.FirstName}`);
+        setText2(`Bienvenido ${user.value.Nombre}`);
         navigation.navigate("Options");
       } else {
         setModalStatus("error");

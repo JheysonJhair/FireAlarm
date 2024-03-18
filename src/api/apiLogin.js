@@ -3,14 +3,14 @@ import axios from "axios";
 //Login
 export const loginUser = async (email, password) => {
   try {
-    const response = await fetch("https://dizzgob.ccontrolz.com/user/login", {
+    const response = await fetch("https://firealarm.ccontrolz.com/usuario/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
         Email: email,
-        Password: password,
+        Contrasena: password,
       }),
     });
 
@@ -28,20 +28,20 @@ export const loginUser = async (email, password) => {
 //Registrar
 export const registerUser = async ({
   Email,
-  Password,
-  FirstName,
-  LastName,
-  Phone,
+  Contrasena,
+  Nombre,
+  Apellido,
+  Telefono,
 }) => {
   try {
     const response = await axios.post(
-      "https://dizzgob.ccontrolz.com/user/insert",
+      "https://firealarm.ccontrolz.com/usuario/insert",
       {
         Email,
-        Password,
-        FirstName,
-        LastName,
-        Phone,
+        Contrasena,
+        Nombre,
+        Apellido,
+        Telefono,
       }
     );
 
