@@ -41,7 +41,7 @@ const Options = () => {
       </View>
       <View style={styles.formContainer}>
         <Button
-          title="Ver Reporte"
+          title="Mis Reportes"
           onPress={() => navigation.navigate("Reporte")}
         />
         <ButtonTwo

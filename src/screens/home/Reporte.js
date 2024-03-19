@@ -1,27 +1,73 @@
-import React from "react";
-import { View, Text, StyleSheet, Image } from "react-native";
+import React, { useState, useEffect } from "react";
+import { View, Text, StyleSheet, Image, ScrollView } from "react-native";
 import Button from "../../components/forms/Button";
 import { useNavigation } from "@react-navigation/native";
+import { getReporte } from "../../api/apiUser";
+import { useUser } from "../../hooks/UserContext";
 
+import LoadingIndicator from "../../components/modals/LoadingIndicator";
 const Reporte = () => {
   const navigation = useNavigation();
+  const [reportes, setReportes] = useState([]);
+  const { userData } = useUser();
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchReportes = async () => {
+      try {
+        const data = await getReporte(userData.IdUsuario);
+        setReportes(data);
+        setIsLoading(false);
+      } catch (error) {
+        setIsLoading(true);
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchReportes();
+
+    const intervalId = setInterval(fetchReportes, 1000);
+
+    return () => clearInterval(intervalId);
+  }, [userData.IdUsuario]);
+
   const handleHome = () => {
     navigation.navigate("Home");
   };
+
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const day = date.getDate();
+    const month = date.getMonth() + 1;
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
+  };
+
   return (
-    <View style={styles.container}>
-      <View style={styles.reportContainer}>
-        <Image source={require("../../assets/logo.png")} style={styles.image} />
-        <View style={styles.textContainer}>
-          <Text style={styles.reportTitle}>Incendio Reportado</Text>
-          <Text style={styles.location}>Olivo/Abancay/Apurimac</Text>
+    <ScrollView style={styles.container}>
+      {isLoading ? (
+        <LoadingIndicator />
+      ) : (
+        <View>
+          {reportes.map((reporte, index) => (
+            <View style={styles.reportContainer} key={index}>
+              <Image source={{ uri: reporte.Imagen }} style={styles.image} />
+              <View style={styles.textContainer}>
+                <Text style={styles.reportTitle}>Incendio Reportado</Text>
+                <Text style={styles.location}>
+                  <Text style={styles.date}>Abancay/Apurímac/Perú</Text>
+                </Text>
+              </View>
+              <View>
+                <Text style={styles.date}>{formatDate(reporte.Fecha)}</Text>
+              </View>
+            </View>
+          ))}
+          <Button title="Otro reporte" onPress={() => handleHome()} />
+          <View style={{ height: 40 }}></View>
         </View>
-        <View style={styles.dateContainer}>
-          <Text style={styles.date}>06/12/2024</Text>
-        </View>
-      </View>
-      <Button title="Otro reporte" onPress={() => handleHome()} />
-    </View>
+      )}
+    </ScrollView>
   );
 };
 
@@ -66,9 +112,6 @@ const styles = StyleSheet.create({
   location: {
     fontSize: 14,
     color: "#666",
-  },
-  dateContainer: {
-    alignItems: "flex-end",
   },
   date: {
     fontSize: 14,

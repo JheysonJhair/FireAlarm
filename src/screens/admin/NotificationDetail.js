@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
-
 import Button from "../../components/forms/Button";
+import { deleteMensaje, updateMensaje } from "../../api/apiFire";
+import { useNavigation } from "@react-navigation/native";
 
 function formatDateString(dateString) {
   const date = new Date(dateString);
@@ -13,29 +14,41 @@ function formatDateString(dateString) {
 
 function NotificationDetail({ route }) {
   const { notification } = route.params;
-  const [selectedStatus, setSelectedStatus] = useState("Incendio");
+  const [selectedStatus, setSelectedStatus] = useState(notification.Estado);
+  const navigation = useNavigation();
 
-  const handleStatusChange = (status) => {
-    setSelectedStatus(status);
+  const handleStatusChange = async (status) => {
+    try {
+      await updateMensaje(notification.IdMensaje, status);
+      setSelectedStatus(status);
+    } catch (error) {
+      console.error("Error al actualizar el estado del mensaje:", error);
+    }
   };
-  const onDelete = () => {};
+
+  const onDelete = async (id) => {
+    try {
+      await deleteMensaje(id);
+      navigation.goBack();
+    } catch (error) {
+      console.error("Error al eliminar el mensaje:", error);
+    }
+  };
+
   return (
     <View style={styles.container}>
       <Image
-        source={require("../../assets/logo.png")}
+        source={{ uri: notification.Imagen }}
         style={styles.image}
         resizeMode="cover"
       />
       <View style={styles.content}>
-        <Text style={styles.title}>UBICACIÓN: Olivo/Abancay/Apurímac</Text>
+        <Text style={styles.title}>UBICACIÓN: Abancay/Apurímac/Perú</Text>
         <Text style={styles.date}>
-          Fecha del suceso: {formatDateString(notification.date)}
+          Fecha del suceso: {formatDateString(notification.Fecha)}
         </Text>
         <Text style={styles.title2}>Indicación:</Text>
-        <Text style={styles.description}>
-          Se està incendiando una casa serca de aqui por el ovalo del olivo, el
-          Incendio es muy fuerte
-        </Text>
+        <Text style={styles.description}>{notification.Descripcion}</Text>
         <View style={styles.linea}>
           <Text style={styles.title2}>Tomar medidas del caso</Text>
         </View>
@@ -43,32 +56,35 @@ function NotificationDetail({ route }) {
           <TouchableOpacity
             style={[
               styles.button,
-              selectedStatus === "Incendio" && styles.selectedButton,
+              selectedStatus === 0 && styles.selectedButton,
             ]}
-            onPress={() => handleStatusChange("Incendio")}
+            onPress={() => handleStatusChange(0)}
           >
             <Text style={styles.buttonText}>Incendio</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={[
               styles.button,
-              selectedStatus === "En camino" && styles.selectedButton2,
+              selectedStatus === 1 && styles.selectedButton2,
             ]}
-            onPress={() => handleStatusChange("En camino")}
+            onPress={() => handleStatusChange(1)}
           >
             <Text style={styles.buttonText}>En camino</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={[
               styles.button,
-              selectedStatus === "Controlado" && styles.selectedButton3,
+              selectedStatus === 2 && styles.selectedButton3,
             ]}
-            onPress={() => handleStatusChange("Controlado")}
+            onPress={() => handleStatusChange(2)}
           >
             <Text style={styles.buttonText}>Controlado</Text>
           </TouchableOpacity>
         </View>
-        <Button title="Eliminar notificacion" onPress={() => onDelete()} />
+        <Button
+          title="Eliminar notificación"
+          onPress={() => onDelete(notification.IdMensaje)}
+        />
       </View>
     </View>
   );
@@ -80,7 +96,7 @@ const styles = StyleSheet.create({
   },
   image: {
     width: "100%",
-    height: 200,
+    height: 260,
   },
   content: {
     paddingHorizontal: 10,

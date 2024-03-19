@@ -6,6 +6,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   ImageBackground,
+  ActivityIndicator 
 } from "react-native";
 import Button from "../../components/forms/Button";
 import TextArea from "../../components/forms/TextArea";
@@ -23,6 +24,7 @@ export default function Home({ route }) {
   const [descripcion, setDescripcion] = useState("");
   const [image, setImage] = useState(null);
   const [selectedLocation, setSelectedLocation] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const [modalVisible, setModalVisible] = useState(false);
   const [modalStatus, setModalStatus] = useState("error");
@@ -46,15 +48,16 @@ export default function Home({ route }) {
   };
 
   const handleNotificar = async () => {
+    if (!descripcion || !image || !selectedLocation) {
+      setModalStatus("error");
+      setModalVisible(true);
+      setText("Campos vacios");
+      setText2("Complete todos los campos, es necesario!");
+      return;
+    }
     try {
-      if (!descripcion || !image || !selectedLocation) {
-        setModalStatus("error");
-        setModalVisible(true);
-        setText("Campos vacios");
-        setText2("Complete todos los campos, es necesario!");
-        return;
-      }
 
+      setIsLoading(true);
       const formData = new FormData();
       formData.append("file", {
         uri: image,
@@ -72,12 +75,15 @@ export default function Home({ route }) {
       if (response.data.msg == "Se creo correctamente") {
         setDescripcion("");
         setImage(null);
+        setSelectedLocation(null)
+        setIsLoading(false);
         setModalStatus("success");
         setModalVisible(true);
         setText(" Incendio reportado!");
         setText2("Tu registro fue enviado satisfactoriamente!!");
       }
     } catch (error) {
+      setIsLoading(false);
       console.error("Error al registrar incendio:", error);
     }
   };
@@ -86,7 +92,7 @@ export default function Home({ route }) {
     if (modalVisible) {
       const timeout = setTimeout(() => {
         setModalVisible(false);
-      }, 3000);
+      }, 1500);
 
       return () => clearTimeout(timeout);
     }
@@ -100,6 +106,11 @@ export default function Home({ route }) {
 
   return (
     <View style={styles.contentContainer}>
+          {isLoading ? (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#2e4466" />
+      </View>
+    ) : (
       <View style={styles.content}>
         <View>
           <Text style={styles.h1}>FireAlarm</Text>
@@ -146,6 +157,7 @@ export default function Home({ route }) {
           </View>
         </ScrollView>
       </View>
+      )}
       <StatusModal
         visible={modalVisible}
         status={modalStatus}
@@ -164,6 +176,8 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     flex: 1,
+
+    justifyContent: "center",
   },
   formSection: {
     marginBottom: 10,

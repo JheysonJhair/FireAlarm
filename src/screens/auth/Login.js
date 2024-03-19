@@ -1,6 +1,13 @@
 import React, { useState, useEffect } from "react";
 import Checkbox from "expo-checkbox";
-import { StyleSheet, Text, View, KeyboardAvoidingView } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  ActivityIndicator,
+  KeyboardAvoidingView,
+} from "react-native";
+
 import { useNavigation } from "@react-navigation/native";
 
 import Button from "../../components/forms/Button";
@@ -15,6 +22,7 @@ import { loginUser } from "../../api/apiLogin";
 
 export default function Login() {
   const navigation = useNavigation();
+  const [isLoading, setIsLoading] = useState(false);
 
   const [modalVisible, setModalVisible] = useState(false);
   const [modalStatus, setModalStatus] = useState("error");
@@ -24,8 +32,8 @@ export default function Login() {
   const { setUserInfo } = useUser();
 
   const [isChecked, setChecked] = useState(false);
-  const [email, setEmail] = useState("prueba@gmail.com");
-  const [password, setPassword] = useState("12345678");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   const onHandleLogin = async (email, password) => {
     try {
@@ -38,6 +46,8 @@ export default function Login() {
       }
       if (email == "admin" && password == "admin") {
         navigation.navigate("Admin");
+        setIsLoading(false);
+        return;
       }
       const emailRegex = /\S+@\S+\.\S+/;
       if (!emailRegex.test(email)) {
@@ -49,8 +59,9 @@ export default function Login() {
       }
 
       const user = await loginUser(email, password);
-
+      setIsLoading(true);
       if (user.msg == "Ingreso correctamente") {
+        setIsLoading(false);
         setUserInfo({
           IdUsuario: user.value.IdUsuario,
           Email: user.value.Email,
@@ -64,7 +75,9 @@ export default function Login() {
         setModalVisible(true);
         setText("Ingreso!");
         setText2(`Bienvenido ${user.value.Nombre}`);
-        navigation.navigate("Options");
+        const timeout = setTimeout(() => {
+          navigation.navigate("Options");
+        }, 1500);
       } else {
         setModalStatus("error");
         setModalVisible(true);
@@ -72,6 +85,7 @@ export default function Login() {
         setText2("Crea una cuenta, es muy rápido!");
       }
     } catch (error) {
+      setIsLoading(false);
       console.error("Error al iniciar sesión:", error);
     }
   };
@@ -87,7 +101,7 @@ export default function Login() {
     if (modalVisible) {
       const timeout = setTimeout(() => {
         setModalVisible(false);
-      }, 3000);
+      }, 1500);
 
       return () => clearTimeout(timeout);
     }
@@ -95,75 +109,85 @@ export default function Login() {
 
   return (
     <KeyboardAvoidingView style={styles.container}>
-      <Text style={styles.h1}>FireAlarm</Text>
-      <Text style={styles.h2}>Hola, Bienvenido de nuevo</Text>
-      <Text style={styles.h3}>Introduce tus credenciales para continuar</Text>
-
-      <View style={styles.formContainer}>
-        <Input
-          placeholder="Email"
-          onChangeText={(text) => setEmail(text)}
-          value={email}
-        />
-        <InputPassword
-          placeholder="Contraseña"
-          onChangeText={(text) => setPassword(text)}
-          value={password}
-          editable={true}
-        />
-        <View style={styles.checkboxContainer}>
-          <View style={styles.rowContainer}>
-            <View style={styles.izquierda}>
-              <Checkbox
-                value={isChecked}
-                onValueChange={setChecked}
-                color={isChecked ? "#2e4466" : undefined}
-              />
-              <Text style={styles.checkboxLabel}>Recuérdame</Text>
-            </View>
-            <View style={styles.derecha}>
-              <Text
-                style={styles.forgotPassword}
-                onPress={handleForgotPassword}
-              >
-                Olvidaste tu contraseña?
-              </Text>
-            </View>
-          </View>
+      {isLoading ? (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="#2e4466" />
         </View>
-        <Button
-          title="Iniciar Sesión"
-          onPress={() => onHandleLogin(email, password)}
-        />
-      </View>
-
-      <View style={styles.texto}>
-        <Text style={styles.h3}>
-          No tienes cuenta?{" "}
-          <Text style={styles.span} onPress={handleRegister}>
-            Registrate
+      ) : (
+        <>
+          <Text style={styles.h1}>FireAlarm</Text>
+          <Text style={styles.h2}>Hola, Bienvenido de nuevo</Text>
+          <Text style={styles.h3}>
+            Introduce tus credenciales para continuar
           </Text>
-        </Text>
-      </View>
-      <View style={styles.dividerContainer}>
-        <View style={styles.dividerLine}></View>
-        <Text style={styles.dividerText}>OR</Text>
-        <View style={styles.dividerLine}></View>
-      </View>
-      <View style={styles.socialButtonsContainer}>
-        <GoogleButton
-          onPress={() => console.log("Botón de Google presionado")}
-        />
-        <FacebookButton
-          onPress={() => console.log("Botón de Facebook presionado")}
-        />
-      </View>
-      <StatusModal
-        visible={modalVisible}
-        status={modalStatus}
-        text={text}
-        text2={text2}
-      />
+
+          <View style={styles.formContainer}>
+            <Input
+              placeholder="Email"
+              onChangeText={(text) => setEmail(text)}
+              value={email}
+            />
+            <InputPassword
+              placeholder="Contraseña"
+              onChangeText={(text) => setPassword(text)}
+              value={password}
+              editable={true}
+            />
+            <View style={styles.checkboxContainer}>
+              <View style={styles.rowContainer}>
+                <View style={styles.izquierda}>
+                  <Checkbox
+                    value={isChecked}
+                    onValueChange={setChecked}
+                    color={isChecked ? "#2e4466" : undefined}
+                  />
+                  <Text style={styles.checkboxLabel}>Recuérdame</Text>
+                </View>
+                <View style={styles.derecha}>
+                  <Text
+                    style={styles.forgotPassword}
+                    onPress={handleForgotPassword}
+                  >
+                    Olvidaste tu contraseña?
+                  </Text>
+                </View>
+              </View>
+            </View>
+            <Button
+              title="Iniciar Sesión"
+              onPress={() => onHandleLogin(email, password)}
+            />
+          </View>
+
+          <View style={styles.texto}>
+            <Text style={styles.h3}>
+              No tienes cuenta?{" "}
+              <Text style={styles.span} onPress={handleRegister}>
+                Registrate
+              </Text>
+            </Text>
+          </View>
+          <View style={styles.dividerContainer}>
+            <View style={styles.dividerLine}></View>
+            <Text style={styles.dividerText}>OR</Text>
+            <View style={styles.dividerLine}></View>
+          </View>
+          <View style={styles.socialButtonsContainer}>
+            <GoogleButton
+              onPress={() => console.log("Botón de Google presionado")}
+            />
+            <FacebookButton
+              onPress={() => console.log("Botón de Facebook presionado")}
+            />
+          </View>
+          <StatusModal
+            visible={modalVisible}
+            status={modalStatus}
+            text={text}
+            text2={text2}
+          />
+        </>
+      )}
     </KeyboardAvoidingView>
   );
 }

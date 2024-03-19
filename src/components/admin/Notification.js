@@ -5,15 +5,15 @@ import Icon from "react-native-vector-icons/FontAwesome";
 const Notification = ({ imageSource, location, date, status }) => {
   let statusIcon;
   switch (status) {
-    case "amarillo":
-      statusIcon = <Icon name="exclamation-circle" size={30} color="#FFC107" />;
+    case 1:
+      statusIcon = <Icon name="exclamation-circle" size={30} color="#47a0ff" />;
       break;
-    case "rojo":
+    case 0:
       statusIcon = (
-        <Icon name="exclamation-triangle" size={30} color="#FF0000" />
+        <Icon name="exclamation-triangle" size={30} color="#FF6347" />
       );
       break;
-    case "verde":
+    case 2:
       statusIcon = <Icon name="check-circle" size={30} color="#4CAF50" />;
       break;
     default:
@@ -24,7 +24,7 @@ const Notification = ({ imageSource, location, date, status }) => {
     <View style={styles.container}>
       <Image source={imageSource} style={styles.image} />
       <View style={styles.textContainer}>
-        <Text style={styles.title}>Olivo/Abancay/Apurimac</Text>
+        <Text style={styles.title}>{location}</Text>
         <Text style={styles.location}>{date}</Text>
       </View>
       {statusIcon}

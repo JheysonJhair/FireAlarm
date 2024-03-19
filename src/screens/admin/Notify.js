@@ -1,13 +1,6 @@
 import React, { useState, useEffect } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  TouchableOpacity,
-} from "react-native";
+import { View, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
 import Notification from "../../components/admin/Notification";
-import * as Location from "expo-location";
 
 import LoadingIndicator from "../../components/modals/LoadingIndicator";
 import { fetchNotify } from "../../api/apiFire";
@@ -31,6 +24,12 @@ function Notify() {
       }
     };
     getData();
+
+    const intervalId = setInterval(() => {
+      getData();
+    }, 1000);
+
+    return () => clearInterval(intervalId);
   }, []);
 
   const handleNotificationPress = (notification) => {
@@ -55,10 +54,10 @@ function Notify() {
                 onPress={() => handleNotificationPress(notification)}
               >
                 <Notification
-                  imageSource={require("../../assets/logo.png")}
-                  status={"amarillo"}
-                  location={notification.latitud + notification.longitud}
-                  date={formatDate(notification.date)}
+                  imageSource={{ uri: notification.Imagen }}
+                  status={notification.Estado}
+                  location={"Abancay/Apurímac/Perú"}
+                  date={formatDate(notification.Fecha)}
                 />
               </TouchableOpacity>
             ))}
